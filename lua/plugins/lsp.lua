@@ -1,5 +1,3 @@
-local lsp_utils = require "config.lsp.utils"
-
 return {
   {
     "neovim/nvim-lspconfig",
@@ -12,6 +10,17 @@ return {
             { path = "${3rd}/luv/library", words = { "vim%.uv" } },
           },
         },
+      },
+      {
+        'SmiteshP/nvim-navic',
+        opts = {
+          highlight = true,
+          lsp = {
+            auto_attach = true,
+            safe_output = true,
+          },
+          click = true
+        }
       },
       {
         'dmmulroy/ts-error-translator.nvim',
@@ -30,17 +39,55 @@ return {
       "williamboman/mason.nvim",
       "williamboman/mason-lspconfig.nvim",
       "neovim/nvim-lspconfig",
-      "SmiteshP/nvim-navic"
+      'saghen/blink.cmp',
+      {
+        "vuki656/package-info.nvim",
+        dependencies = {
+          "MunifTanjim/nui.nvim",
+          "nvim-telescope/telescope.nvim",
+        },
+        config = function()
+          require('package-info').setup()
+          -- Show dependency versions
+          vim.keymap.set({ "n" }, "<LEADER>ns", require("package-info").show, { silent = true, noremap = true })
+
+          -- Hide dependency versions
+          vim.keymap.set({ "n" }, "<LEADER>nc", require("package-info").hide, { silent = true, noremap = true })
+
+          -- Toggle dependency versions
+          vim.keymap.set({ "n" }, "<LEADER>nt", require("package-info").toggle, { silent = true, noremap = true })
+
+          -- Update dependency on the line
+          vim.keymap.set({ "n" }, "<LEADER>nu", require("package-info").update, { silent = true, noremap = true })
+
+          -- Delete dependency on the line
+          vim.keymap.set({ "n" }, "<LEADER>nd", require("package-info").delete, { silent = true, noremap = true })
+
+          -- Install a new dependency
+          vim.keymap.set({ "n" }, "<LEADER>ni", require("package-info").install, { silent = true, noremap = true })
+
+          -- Install a different dependency version
+          vim.keymap.set({ "n" }, "<LEADER>np", require("package-info").change_version, { silent = true, noremap = true })
+
+          require("telescope").load_extension("package_info")
+        end
+      },
+      {
+        "b0o/schemastore.nvim",
+      }
     },
     config = function()
       local lspconfig = require "lspconfig"
       require("mason").setup()
       require("mason-lspconfig").setup()
 
+      local lsp_utils = require "config.lsp.utils"
+      local capabilities = require('blink.cmp').get_lsp_capabilities(lsp_utils.capabilities)
 
+      -- lsp config cfg
       require("lspconfig").lua_ls.setup {
         on_attach = lsp_utils.on_attach,
-        capabilities = lsp_utils.capabilities,
+        capabilities = capabilities,
         on_init = lsp_utils.on_init,
         settings = {
           Lua = {
@@ -81,6 +128,8 @@ return {
           },
         },
       }
+
+      -- mason lsp cfg
       require('mason-lspconfig').setup_handlers({
         function(server)
           if server == "tsserver" then
@@ -108,7 +157,8 @@ return {
         end,
       })
 
-      --[[ vim.g.mason_binaries_list = opts.ensure_installed ]]
+      -- navic cfg
+      lsp_utils.navic_setup()
     end
   }
 }

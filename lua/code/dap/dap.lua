@@ -105,11 +105,7 @@ return {
         end,
       },
     }
-
-
-
-
-    -- require("telescope").load_extension "dap"
+    require("telescope").load_extension "dap"
     -- ui modifications
     vim.api.nvim_set_hl(0, "DapBreakpoint", { ctermbg = 0, fg = "#993939", bg = "#31353f" })
     vim.api.nvim_set_hl(0, "DapLogPoint", { ctermbg = 0, fg = "#61afef", bg = "#31353f" })
