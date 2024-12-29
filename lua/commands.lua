@@ -1,4 +1,4 @@
---[[ vim.api.nvim_create_user_command('Wa', function()
+vim.api.nvim_create_user_command('Wa', function()
   vim.cmd('wall')
 end, {})
 
@@ -12,4 +12,5 @@ end, {})
 
 vim.api.nvim_create_user_command('Qa', function()
   vim.cmd('qall')
-end, {}) ]]
+end, {})
+--[[ ]]
