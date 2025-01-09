@@ -4,7 +4,7 @@ return {
     dependencies = {
       {
         "folke/lazydev.nvim",
-        ft = "lua", -- only load on lua files
+        ft = "lua",
         opts = {
           library = {
             { path = "${3rd}/luv/library", words = { "vim%.uv" } },
@@ -49,31 +49,68 @@ return {
         config = function()
           require('package-info').setup()
           -- Show dependency versions
-          vim.keymap.set({ "n" }, "<LEADER>ns", require("package-info").show, { silent = true, noremap = true })
+          vim.keymap.set({ "n" }, "<leader>ns", require("package-info").show, { silent = true, noremap = true })
 
           -- Hide dependency versions
-          vim.keymap.set({ "n" }, "<LEADER>nc", require("package-info").hide, { silent = true, noremap = true })
+          vim.keymap.set({ "n" }, "<leader>nc", require("package-info").hide, { silent = true, noremap = true })
 
           -- Toggle dependency versions
-          vim.keymap.set({ "n" }, "<LEADER>nt", require("package-info").toggle, { silent = true, noremap = true })
+          vim.keymap.set({ "n" }, "<leader>nt", require("package-info").toggle, { silent = true, noremap = true })
 
           -- Update dependency on the line
-          vim.keymap.set({ "n" }, "<LEADER>nu", require("package-info").update, { silent = true, noremap = true })
+          vim.keymap.set({ "n" }, "<leader>nu", require("package-info").update, { silent = true, noremap = true })
 
           -- Delete dependency on the line
-          vim.keymap.set({ "n" }, "<LEADER>nd", require("package-info").delete, { silent = true, noremap = true })
+          vim.keymap.set({ "n" }, "<leader>nd", require("package-info").delete, { silent = true, noremap = true })
 
-          -- Install a new dependency
-          vim.keymap.set({ "n" }, "<LEADER>ni", require("package-info").install, { silent = true, noremap = true })
+          -- install a new dependency
+          vim.keymap.set({ "n" }, "<leader>ni", require("package-info").install, { silent = true, noremap = true })
 
-          -- Install a different dependency version
-          vim.keymap.set({ "n" }, "<LEADER>np", require("package-info").change_version, { silent = true, noremap = true })
+          -- install a different dependency version
+          vim.keymap.set({ "n" }, "<leader>np", require("package-info").change_version, { silent = true, noremap = true })
 
           require("telescope").load_extension("package_info")
         end
       },
       {
         "b0o/schemastore.nvim",
+      },
+      {
+        "folke/trouble.nvim",
+        opts = {}, -- for default options, refer to the configuration section for custom setup.
+        cmd = "Trouble",
+        keys = {
+          {
+            "<leader>xx",
+            "<cmd>Trouble diagnostics toggle<cr>",
+            desc = "Diagnostics (Trouble)",
+          },
+          {
+            "<leader>xX",
+            "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
+            desc = "Buffer Diagnostics (Trouble)",
+          },
+          {
+            "<leader>cs",
+            "<cmd>Trouble symbols toggle focus=false<cr>",
+            desc = "Symbols (Trouble)",
+          },
+          {
+            "<leader>cl",
+            "<cmd>Trouble lsp toggle focus=false win.position=right<cr>",
+            desc = "LSP Definitions / references / ... (Trouble)",
+          },
+          {
+            "<leader>xL",
+            "<cmd>Trouble loclist toggle<cr>",
+            desc = "Location List (Trouble)",
+          },
+          {
+            "<leader>xQ",
+            "<cmd>Trouble qflist toggle<cr>",
+            desc = "Quickfix List (Trouble)",
+          },
+        },
       }
     },
     config = function()
@@ -82,52 +119,8 @@ return {
       require("mason-lspconfig").setup()
 
       local lsp_utils = require "config.lsp.utils"
-      local capabilities = require('blink.cmp').get_lsp_capabilities(lsp_utils.capabilities)
 
-      -- lsp config cfg
-      require("lspconfig").lua_ls.setup {
-        on_attach = lsp_utils.on_attach,
-        capabilities = capabilities,
-        on_init = lsp_utils.on_init,
-        settings = {
-          Lua = {
-            format = {
-              enable = true,
-            },
-            diagnostics = {
-              globals = { "vim" },
-            },
-            workspace = {
-              library = {
-                [vim.fn.expand "$VIMRUNTIME/lua"] = true,
-                [vim.fn.expand "$VIMRUNTIME/lua/vim/lsp"] = true,
-                [vim.fn.stdpath "data" .. "/lazy/ui/nvchad_types"] = true,
-                [vim.fn.stdpath "data" .. "/lazy/lazy.nvim/lua/lazy"] = true,
-              },
-              maxPreload = 100000,
-              preloadFileSize = 10000,
-            },
-            runtime = {
-              version = 'LuaJIT',
-              special = {
-                spec = 'require',
-              },
-            },
-            hint = {
-              enable = true,
-              arrayIndex = 'Disable', -- "Enable" | "Auto" | "Disable"
-              await = true,
-              paramName = 'Literal',  -- "All" | "Literal" | "Disable"
-              paramType = true,
-              semicolon = 'Disable',  -- "All" | "SameLine" | "Disable"
-              setType = false,
-            },
-            telemetry = {
-              enable = false,
-            }
-          },
-        },
-      }
+      lsp_utils.defaults()
 
       -- mason lsp cfg
       require('mason-lspconfig').setup_handlers({
@@ -135,25 +128,31 @@ return {
           if server == "tsserver" then
             return
           end
+
           if server == "rust_analyzer" then
             return
           end
+
           if server == "vtsls" then
             return
           end
 
+          if server == "lua_ls" then
+            return
+          end
+
           local lsp_cfg = require('config.lsp.utils')
-          local opt = {
+          local opts = {
             on_attach = lsp_cfg.on_attach,
             capabilities = lsp_cfg.capabilities,
             on_init = lsp_cfg.on_init,
           }
-          local require_ok, settings = pcall(require, "config.lsp.utils.settings." .. server)
+          local require_ok, settings = pcall(require, "config.lsp.settings." .. server)
           if require_ok then
-            opt = vim.tbl_deep_extend("force", settings, opt)
+            opts = vim.tbl_deep_extend("force", settings, opts)
           end
 
-          lspconfig[server].setup(opt)
+          lspconfig[server].setup(opts)
         end,
       })
 

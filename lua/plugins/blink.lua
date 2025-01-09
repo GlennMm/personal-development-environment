@@ -7,7 +7,6 @@ return {
     'rafamadriz/friendly-snippets',
     "giuxtaposition/blink-cmp-copilot",
   },
-  version = 'v0.*',
   ---@module 'blink.cmp'
   ---@type blink.cmp.Config
   opts = {
@@ -17,7 +16,7 @@ return {
     -- 'enter' for mappings similar to 'super-tab' but with 'enter' to accept
     -- see the "default configuration" section below for full documentation on how to define
     -- your own keymap.
-    keymap = { preset = 'default' },
+    keymap = { preset = 'enter' },
     appearance = {
       -- Sets the fallback highlight groups to nvim-cmp's highlight groups
       -- Useful for when your theme doesn't support blink.cmp
@@ -31,18 +30,13 @@ return {
     -- default list of enabled providers defined so that you can extend it
     -- elsewhere in your config, without redefining it, via `opts_extend`
     sources = {
-      default = { 'codecompanion', 'copilot', 'lsp', 'path', 'snippets', 'buffer' },
+      default = { 'copilot', 'lsp', 'path', 'snippets', 'buffer' },
       providers = {
         copilot = {
           name = "copilot",
           module = "blink-cmp-copilot",
           score_offset = 100,
           async = true,
-        },
-        codecompanion = {
-          name = "CodeCompanion",
-          module = "codecompanion.providers.completion.blink",
-          enabled = true,
         },
       },
       --[[  completion = {

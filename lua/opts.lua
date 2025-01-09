@@ -38,4 +38,6 @@ opt.whichwrap:append("<>[]hl")
 opt.cmdheight = 0
 opt.scrolloff = 16
 opt.sidescrolloff = 16
-vim.env.PATH = vim.fn.stdpath("data") .. "/mason/bin" .. (false and ";" or ":") .. vim.env.PATH
+
+-- gui items
+vim.opt.guifont = "Liga SFMono Nerd Font:h9"

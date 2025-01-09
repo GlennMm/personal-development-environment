@@ -43,5 +43,5 @@ local function toggle_term()
 end
 
 vim.api.nvim_create_user_command("FlTerm", toggle_term, {})
-vim.keymap.set({ "n", "v", "t" }, "<space>tt", toggle_term)
+vim.keymap.set({ "n", "v", "t" }, "<space>tg", toggle_term)
 vim.keymap.set("t", "<esc><esc>", "<c-\\><c-n>")

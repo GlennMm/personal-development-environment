@@ -33,6 +33,5 @@ require("lazy").setup({
       import = "code.test"
     }
 
-  },
-  checker = { enabled = true },
+  }
 })

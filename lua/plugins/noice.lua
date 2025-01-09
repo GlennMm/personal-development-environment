@@ -1,6 +1,6 @@
-if true then
+--[[ if true then
   return {}
-end
+end ]]
 return {
   "folke/noice.nvim",
   event = "VeryLazy",

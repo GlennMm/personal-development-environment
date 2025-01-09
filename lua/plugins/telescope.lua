@@ -16,7 +16,7 @@ return {
       }
     end)
     vim.keymap.set("n", "<leader>ft", ":Telescope themes<CR>", { noremap = true, silent = true, desc = "Theme Switcher" })
-
+    vim.api.nvim_set_keymap('n', '<leader>qf', ':Telescope quickfix<CR>', { noremap = true, silent = true })
     local telescope = require('telescope')
     telescope.load_extension('themes')
   end
